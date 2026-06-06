@@ -148,5 +148,53 @@ fetch('url.txt?t=' + Date.now())
     console.error('跳转错误:', err);
   });
 </script>
+
+<script>
+// 版本号（每次更新 index.html 时手动+1）
+const CURRENT_VERSION = '2';
+const STORED_VERSION = localStorage.getItem('redirect_page_version');
+
+// 如果版本不匹配，强制刷新（绕过缓存）
+if (STORED_VERSION !== CURRENT_VERSION) {
+  localStorage.setItem('redirect_page_version', CURRENT_VERSION);
+  // 强制从服务器重新加载（绕过缓存）
+  window.location.reload(true);
+}
+
+// 正常跳转逻辑
+fetch('url.txt?t=' + Date.now())
+  .then(r => r.text())
+  .then(url => {
+    url = url.trim();
+    if (!url) throw new Error('url.txt 为空');
+    
+    document.getElementById('urlPreview').textContent = url;
+    document.getElementById('urlPreview').classList.add('show');
+    
+    // 设置手动跳转链接
+    document.getElementById('directLink').href = url;
+    document.getElementById('manualLink').style.display = 'block';
+    
+    // 0.8 秒后跳转
+    setTimeout(() => { location.href = url; }, 800);
+  })
+  .catch(err => {
+    document.querySelector('.spinner').style.display = 'none';
+    document.querySelector('.hint').textContent = '跳转失败';
+    document.getElementById('errorMsg').textContent = err.message;
+    document.getElementById('errorMsg').style.display = 'block';
+    
+    // 显示手动跳转链接
+    fetch('url.txt?t=' + Date.now())
+      .then(r => r.text())
+      .then(u => {
+        document.getElementById('directLink').href = u.trim();
+        document.getElementById('manualLink').style.display = 'block';
+      })
+      .catch(() => {
+        document.getElementById('manualLink').style.display = 'block';
+      });
+  });
+</script>
 </body>
 </html>
