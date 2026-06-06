@@ -127,6 +127,9 @@ fetch('url.txt?t=' + Date.now())
     if(!url) throw new Error('url.txt 内容为空');
     document.getElementById('urlPreview').textContent = url;
     document.getElementById('urlPreview').classList.add('show');
+    // 设置手动跳转链接
+    document.getElementById('directLink').href = url;
+    document.getElementById('manualLink').style.display = 'block';
     // 0.8 秒后跳转，让用户看到地址
     setTimeout(() => { location.href = url; }, 800);
   })
@@ -135,6 +138,13 @@ fetch('url.txt?t=' + Date.now())
     document.querySelector('.hint').textContent = '跳转失败';
     document.getElementById('errorMsg').textContent = err.message;
     document.getElementById('errorMsg').style.display = 'block';
+    // 显示手动跳转链接（使用上次保存的 url 或默认地址）
+    fetch('url.txt?t=' + Date.now()).then(r=>r.text()).then(u=>{
+      document.getElementById('directLink').href = u.trim();
+      document.getElementById('manualLink').style.display = 'block';
+    }).catch(()=>{
+      document.getElementById('manualLink').style.display = 'block';
+    });
     console.error('跳转错误:', err);
   });
 </script>
