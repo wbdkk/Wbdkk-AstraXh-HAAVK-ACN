@@ -1,274 +1,122 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BTR 公会 - 选择站点</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ACN 客户端重定向页面</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background-color: #121212;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #121212;
       color: #e0e0e0;
-      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       padding: 20px;
     }
-    /* 顶部栏 */
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 12px 0 22px 0;
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 2.5rem;
+      color: #64b5f6;
+      letter-spacing: 2px;
     }
-    .topbar-site {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .topbar-site-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: none;
-    }
-    .topbar-site-name {
-      font-size: 24px;
-      color: #ffffff;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-    /* 主容器 */
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-      background-color: #1e1e1e;
-      padding: 30px;
-      border-radius: 12px;
-    }
-    .page-title {
-      font-size: 22px;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 6px;
-    }
-    .page-subtitle {
-      font-size: 13px;
-      color: #888;
-      margin-bottom: 28px;
-    }
-    /* 站点卡片网格 */
-    .site-grid {
+    .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      max-width: 600px;
+      width: 100%;
     }
-    .site-card {
-      background-color: #2d2d2d;
-      border-radius: 10px;
-      padding: 22px 24px;
-      border-left: 4px solid #64b5f6;
+    .card {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.25s;
       text-decoration: none;
-      color: inherit;
-      display: block;
+      color: #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
     }
-    .site-card:hover {
-      background-color: #353535;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 20px rgba(100, 181, 246, 0.12);
+    .card:hover {
+      border-color: #64b5f6;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(100,181,246,0.15);
     }
-    .site-card-icon {
-      font-size: 36px;
-      margin-bottom: 14px;
+    .card .icon {
+      font-size: 2.8rem;
+      line-height: 1;
     }
-    .site-card-title {
-      font-size: 17px;
-      font-weight: bold;
-      color: #ffffff;
-      margin-bottom: 8px;
-    }
-    .site-card-desc {
-      font-size: 13px;
-      color: #aaa;
-      line-height: 1.6;
-    }
-    .site-card-url {
-      font-size: 11px;
-      color: #555;
-      margin-top: 14px;
-      word-break: break-all;
-    }
-    .site-card-btn {
-      display: inline-block;
-      margin-top: 16px;
-      padding: 8px 20px;
-      background: linear-gradient(135deg, #64b5f6, #42a5f5);
-      color: #0f0f0f;
-      border: none;
-      border-radius: 8px;
-      font-size: 13px;
+    .card .label {
+      font-size: 1.15rem;
       font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      letter-spacing: 1px;
     }
-    .site-card:hover .site-card-btn {
-      box-shadow: 0 0 16px rgba(100, 181, 246, 0.35);
+    .card .desc {
+      font-size: 0.85rem;
+      color: #888;
     }
-    /* 加载状态 */
-    .loading-wrap {
-      text-align: center;
-      padding: 60px 20px;
-    }
-    .spinner {
-      width: 48px;
-      height: 48px;
-      border: 4px solid rgba(100,181,246,0.15);
-      border-top: 4px solid #64b5f6;
-      border-radius: 50%;
-      animation: spin 0.9s cubic-bezier(.4,0,.2,1) infinite;
-      margin: 0 auto 20px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-text { color: #888; font-size: 14px; }
-    .error-msg {
-      background-color: #2d2d2d;
-      border-left: 4px solid #f55;
-      border-radius: 10px;
-      padding: 18px 20px;
-      color: #f55;
-      font-size: 14px;
-      margin-top: 20px;
-      display: none;
-    }
-    /* 底部 */
-    .footer {
-      text-align: center;
-      padding: 28px 0 8px;
-      color: #444;
-      font-size: 12px;
-      max-width: 1000px;
-      margin: 0 auto;
+    .status {
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      color: #666;
     }
   </style>
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
 </head>
 <body>
-
-  <!-- 顶部栏 -->
-  <div class="topbar">
-    <div class="topbar-site">
-      <img class="topbar-site-avatar" id="siteAvatar" src="" alt="Site Avatar">
-      <div class="topbar-site-name">BTR 公会</div>
-    </div>
+  <h1>ACN 客户端重定向页面</h1>
+  <div class="grid">
+    <a class="card" id="card-main" href="#" target="_blank" rel="noopener">
+      <span class="icon">💻</span>
+      <span class="label">主站</span>
+      <span class="desc">ACN 个人主页</span>
+    </a>
+    <a class="card" id="card-dl" href="#" target="_blank" rel="noopener">
+      <span class="icon">📂</span>
+      <span class="label">文件下载</span>
+      <span class="desc">下载中心</span>
+    </a>
   </div>
-
-  <!-- 主内容 -->
-  <div class="container">
-    <div class="page-title">选择站点</div>
-    <div class="page-subtitle">请选择你要访问的站点</div>
-
-    <!-- 加载中 -->
-    <div class="loading-wrap" id="loadingWrap">
-      <div class="spinner"></div>
-      <div class="loading-text">正在获取地址...</div>
-    </div>
-
-    <!-- 站点卡片 -->
-    <div class="site-grid" id="siteGrid" style="display:none;"></div>
-
-    <!-- 错误提示 -->
-    <div class="error-msg" id="errorMsg"></div>
-  </div>
-
-  <div class="footer">BTR Guild &copy; 2024</div>
+  <div class="status" id="status">正在获取隧道地址…</div>
 
   <script>
-    // 版本检查（强制刷新缓存）
-    const CURRENT_VERSION = '5';
-    const STORED_VERSION = localStorage.getItem('redirect_page_version');
-    if (STORED_VERSION !== CURRENT_VERSION) {
-      localStorage.setItem('redirect_page_version', CURRENT_VERSION);
-      window.location.reload(true);
-    }
+    (async () => {
+      const API = 'https://api.github.com';
+      const REPO = 'Wbdkk/Wbdkk-AstraXh-HAAVK-ACN';
+      const BRANCH = 'main';
+      const TXT_PATH = 'url.txt';
 
-    const loadingWrap = document.getElementById('loadingWrap');
-    const siteGrid     = document.getElementById('siteGrid');
-    const errorMsg     = document.getElementById('errorMsg');
-    const siteAvatar   = document.getElementById('siteAvatar');
-
-    // 站点配置（baseUrl 由 JS 动态填充）
-    const SITE_CONFIG = [
-      {
-        icon: '🏠',
-        title: '主站',
-        desc: '公告、每日须知、近况更新、危害报告等主要内容。',
-        path: ''
-      },
-      {
-        icon: '📥',
-        title: '文件下载',
-        desc: '下载公会相关文件、资源包、工具等。',
-        path: '/download'
+      async function fetchRaw() {
+        const raw = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${TXT_PATH}?_=${Date.now()}`;
+        const r = await fetch(raw);
+        if (!r.ok) throw new Error('无法读取 url.txt');
+        return (await r.text()).trim();
       }
-    ];
 
-    function showError(msg) {
-      loadingWrap.style.display = 'none';
-      siteGrid.style.display = 'none';
-      errorMsg.textContent = '加载失败：' + msg;
-      errorMsg.style.display = 'block';
-    }
+      async function updateLink() {
+        try {
+          const base = await fetchRaw();
+          if (!base) throw new Error('url.txt 为空');
+          document.getElementById('card-main').href = base + '/';
+          document.getElementById('card-dl').href = base + '/download/';
+          document.getElementById('status').textContent = '隧道地址：' + base;
+          document.getElementById('status').style.color = '#4caf50';
+        } catch (e) {
+          document.getElementById('status').textContent = '获取隧道地址失败，请稍后刷新';
+          document.getElementById('status').style.color = '#f44336';
+          console.error(e);
+        }
+      }
 
-    function renderSites(baseUrl) {
-      loadingWrap.style.display = 'none';
-      errorMsg.style.display = 'none';
-      siteGrid.style.display = 'grid';
-      siteGrid.innerHTML = '';
-
-      // 设置站点头像（尝试获取主站头像）
-      const avatarUrl = baseUrl + '/api/avatar?t=' + Date.now();
-      siteAvatar.src = avatarUrl;
-      siteAvatar.onerror = () => { siteAvatar.style.display = 'none'; };
-
-      SITE_CONFIG.forEach(site => {
-        const url = baseUrl.replace(/\/+$/, '') + site.path;
-        const card = document.createElement('a');
-        card.className = 'site-card';
-        card.href = url;
-        card.target = '_self';
-        card.innerHTML = `
-          <div class="site-card-icon">${site.icon}</div>
-          <div class="site-card-title">${site.title}</div>
-          <div class="site-card-desc">${site.desc}</div>
-          <div class="site-card-url">${url}</div>
-          <button class="site-card-btn">前往 →</button>
-        `;
-        siteGrid.appendChild(card);
-      });
-    }
-
-    // 获取最新地址并渲染
-    fetch('url.txt?t=' + Date.now(), { cache: 'no-store' })
-      .then(r => {
-        if (!r.ok) throw new Error('无法读取 url.txt（HTTP ' + r.status + '）');
-        return r.text();
-      })
-      .then(url => {
-        url = url.trim();
-        if (!url) throw new Error('url.txt 为空');
-        renderSites(url);
-      })
-      .catch(err => {
-        showError(err.message + '。请确保主站已上线，或联系管理员。');
-        console.error('加载失败：', err);
-      });
+      updateLink();
+      setInterval(updateLink, 60000);
+    })();
   </script>
 </body>
 </html>
