@@ -9,175 +9,296 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <style>
+    :root {
+      --bg: #1a1a22;
+      --bg-card: rgba(255,255,255,0.035);
+      --bg-card-hover: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.08);
+      --border-hover: rgba(125,211,252,0.35);
+      --text-title: #ffffff;
+      --text-body: #a1a1aa;
+      --text-dim: #71717a;
+      --accent: #7dd3fc;
+      --accent-dim: rgba(125,211,252,0.12);
+      --success: #86efac;
+      --danger: #fca5a5;
+      --radius: 12px;
+      --transition: 0.2s ease;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: "Microsoft YaHei", "PingFang SC", -apple-system, sans-serif;
-      background: #121212;
-      color: #e0e0e0;
+      font-family: "Microsoft YaHei", "PingFang SC", -apple-system, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text-body);
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ======== 顶部导航栏 ======== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 56px;
+      background: rgba(26,26,34,0.85);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .navbar-logo {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-title);
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .navbar-logo .dot {
+      width: 8px; height: 8px;
+      border-radius: 2px;
+      background: var(--accent);
+    }
+    .navbar-links {
+      display: flex;
+      gap: 24px;
+    }
+    .navbar-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color var(--transition);
+    }
+    .navbar-links a:hover { color: var(--accent); }
+
+    /* ======== 主体 ======== */
+    .main {
+      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 40px 24px;
     }
-    .container {
-      max-width: 520px;
-      width: 100%;
+    .hero {
       text-align: center;
+      margin-bottom: 48px;
     }
-    .logo {
-      font-size: 28px;
+    .hero h1 {
+      font-size: 32px;
       font-weight: 700;
-      color: #64b5f6;
+      color: var(--text-title);
       letter-spacing: 2px;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
-    .subtitle {
-      font-size: 13px;
-      color: #666;
+    .hero p {
+      font-size: 14px;
+      color: var(--text-dim);
+    }
+
+    /* ======== 状态提示 ======== */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
       margin-bottom: 32px;
+      font-size: 13px;
+      min-height: 20px;
     }
-    /* 状态区域 */
-    .status-wrap {
-      margin-bottom: 28px;
-    }
-    .spinner {
-      width: 44px;
-      height: 44px;
-      border: 3px solid rgba(100,181,246,0.15);
-      border-top: 3px solid #64b5f6;
+    .status-bar .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid var(--accent-dim);
+      border-top: 2px solid var(--accent);
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 16px;
+      animation: spin 0.7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .status-text {
-      font-size: 14px;
-      color: #888;
-    }
-    .status-text.success { color: #4caf50; }
-    .status-text.error { color: #f44336; }
-    /* 隧道地址显示 */
-    .url-box {
-      background: #1e1e1e;
-      border: 1px solid #333;
-      border-radius: 8px;
-      padding: 14px 18px;
+    .status-bar.success { color: var(--success); }
+    .status-bar.error { color: var(--danger); }
+
+    /* ======== 卡片网格 ======== */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 240px);
+      gap: 20px;
       margin-bottom: 24px;
-      display: none;
-      word-break: break-all;
     }
-    .url-box.show { display: block; }
-    .url-label {
+    @media (max-width: 560px) {
+      .card-grid { grid-template-columns: 1fr; width: 100%; max-width: 320px; }
+    }
+    .tool-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 32px 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      text-decoration: none;
+      transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .tool-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
+      transform: translateY(-3px);
+    }
+    .tool-card:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+    .tool-card .icon {
+      width: 48px; height: 48px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tool-card .icon svg {
+      width: 36px; height: 36px;
+      stroke: var(--accent);
+      stroke-width: 1.8;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .tool-card .name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-title);
+      margin-bottom: 6px;
+    }
+    .tool-card .desc {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+    .tool-card.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    /* ======== 隧道地址 ======== */
+    .url-info {
       font-size: 11px;
-      color: #555;
-      margin-bottom: 4px;
+      color: var(--text-dim);
+      text-align: center;
+      word-break: break-all;
+      max-width: 480px;
+      line-height: 1.6;
+    }
+    .url-info .label {
       text-transform: uppercase;
       letter-spacing: 1px;
+      margin-right: 6px;
     }
-    .url-value {
-      font-size: 13px;
-      color: #64b5f6;
-    }
-    /* 按钮组 */
-    .btn-group {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-    .btn {
-      display: inline-block;
-      padding: 12px 28px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.25s;
-      border: 2px solid #444;
-      background: #1e1e1e;
-      color: #e0e0e0;
-      letter-spacing: 1px;
-    }
-    .btn:hover {
-      border-color: #64b5f6;
-      background: #2d2d2d;
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, #64b5f6, #42a5f5);
-      color: #0f0f0f;
-      border-color: #64b5f6;
-    }
-    .btn-primary:hover {
-      box-shadow: 0 0 20px rgba(100,181,246,0.35);
-      background: linear-gradient(135deg, #64b5f6, #42a5f5);
-    }
-    /* 页脚 */
+    .url-info .value { color: var(--accent); }
+
+    /* ======== 重试按钮 ======== */
     .retry-btn {
       display: none;
-      margin-top: 16px;
-      padding: 10px 24px;
-      background: #1e1e1e;
-      border: 2px solid #f44336;
-      color: #f44336;
-      border-radius: 8px;
+      margin-top: 20px;
+      padding: 8px 20px;
+      background: transparent;
+      border: 1px solid var(--danger);
+      color: var(--danger);
+      border-radius: var(--radius);
       font-size: 13px;
       cursor: pointer;
-      transition: all 0.25s;
+      transition: all var(--transition);
     }
     .retry-btn:hover {
-      background: #2d2d2d;
+      background: rgba(252,165,165,0.08);
     }
     .retry-btn.show { display: inline-block; }
-    /* 页脚 */
+
+    /* ======== 页脚 ======== */
     .footer {
-      margin-top: 36px;
-      font-size: 11px;
-      color: #444;
+      padding: 24px 32px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-dim);
+      border-top: 1px solid var(--border);
+      line-height: 1.8;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="logo">ACN客户端导向页</div>
-    <div class="subtitle">请选择要访问的站点</div>
+  <!-- 顶部导航 -->
+  <nav class="navbar">
+    <div class="navbar-logo">
+      <span class="dot"></span>
+      ACN客户端导向页
+    </div>
+    <div class="navbar-links">
+      <a href="#" id="navMain">主站</a>
+      <a href="#" id="navDownload">下载</a>
+    </div>
+  </nav>
+
+  <!-- 主体 -->
+  <div class="main">
+    <div class="hero">
+      <h1>选择站点</h1>
+      <p>请选择要访问的站点</p>
+    </div>
 
     <!-- 状态 -->
-    <div class="status-wrap">
-      <div class="spinner" id="spinner"></div>
-      <div class="status-text" id="statusText">正在获取隧道地址...</div>
+    <div class="status-bar" id="statusBar">
+      <div class="spinner"></div>
+      <span id="statusText">正在获取隧道地址...</span>
+    </div>
+
+    <!-- 卡片网格 -->
+    <div class="card-grid" id="cardGrid">
+      <a class="tool-card disabled" id="cardMain" href="#">
+        <div class="icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M3 12L12 3l9 9M5 10v10h4v-6h6v6h4V10"/>
+          </svg>
+        </div>
+        <div class="name">进入主站</div>
+        <div class="desc">公告、近况、服务器报告</div>
+      </a>
+      <a class="tool-card disabled" id="cardDownload" href="#">
+        <div class="icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/>
+          </svg>
+        </div>
+        <div class="name">文件下载</div>
+        <div class="desc">客户端、资源包等下载</div>
+      </a>
     </div>
 
     <!-- 隧道地址 -->
-    <div class="url-box" id="urlBox">
-      <div class="url-label">当前隧道地址</div>
-      <div class="url-value" id="urlValue"></div>
-    </div>
-
-    <!-- 按钮 -->
-    <div class="btn-group" id="btnGroup" style="display:none;">
-      <a class="btn btn-primary" id="btnMain" href="#">进入主站</a>
-      <a class="btn" id="btnDownload" href="#">文件下载</a>
+    <div class="url-info" id="urlInfo" style="display:none;">
+      <span class="label">Tunnel</span>
+      <span class="value" id="urlValue"></span>
     </div>
 
     <!-- 重试 -->
     <button class="retry-btn" id="retryBtn" onclick="init()">重新获取</button>
-
-    <div class="footer">&copy; 2026 ACN客户端导向页 All rights reserved.<br>本网站所有权归 忘本的可可 所有</div>
   </div>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    &copy; 2026 ACN客户端导向页 All rights reserved.<br>
+    本网站所有权归 忘本的可可 所有
+  </footer>
 
   <script>
     // ============================================================
     // 配置
     // ============================================================
     var REPO = 'wbdkk/Wbdkk-AstraXh-HAAVK-ACN';
-    // 多源 URL 列表（按优先级排序）
-    // 1. 相对路径（同源，GitHub Pages，国内最稳定但可能有缓存延迟）
-    // 2. jsdelivr CDN（国内通常可访问，缓存约12小时）
-    // 3. raw.githubusercontent.com（最新但国内可能被墙）
     var URL_SOURCES = [
       'url.txt?t=' + Date.now(),
       'https://cdn.jsdelivr.net/gh/' + REPO + '@main/url.txt?t=' + Date.now(),
@@ -185,7 +306,7 @@
     ];
 
     // ============================================================
-    // 兼容性工具：XMLHttpRequest GET（不依赖 fetch/async）
+    // 兼容性工具：XMLHttpRequest GET
     // ============================================================
     function httpGet(url, onSuccess, onError) {
       var xhr = new XMLHttpRequest();
@@ -214,7 +335,6 @@
     // ============================================================
     function fetchTunnelUrl(callback) {
       var index = 0;
-      var tried = 0;
       var total = URL_SOURCES.length;
 
       function tryNext() {
@@ -232,12 +352,10 @@
             callback(text, null);
           } else {
             console.log('[redirect] ' + srcName + ' 返回无效: ' + text);
-            tried++;
             tryNext();
           }
         }, function(err) {
           console.log('[redirect] ' + srcName + ' 失败: ' + err);
-          tried++;
           tryNext();
         });
       }
@@ -249,49 +367,52 @@
     // 主逻辑
     // ============================================================
     function init() {
-      var spinner = document.getElementById('spinner');
+      var statusBar = document.getElementById('statusBar');
       var statusText = document.getElementById('statusText');
-      var urlBox = document.getElementById('urlBox');
+      var urlInfo = document.getElementById('urlInfo');
       var urlValue = document.getElementById('urlValue');
-      var btnGroup = document.getElementById('btnGroup');
-      var btnMain = document.getElementById('btnMain');
-      var btnDownload = document.getElementById('btnDownload');
+      var cardMain = document.getElementById('cardMain');
+      var cardDownload = document.getElementById('cardDownload');
+      var navMain = document.getElementById('navMain');
+      var navDownload = document.getElementById('navDownload');
       var retryBtn = document.getElementById('retryBtn');
 
       // 重置 UI
-      spinner.style.display = 'block';
-      statusText.className = 'status-text';
-      statusText.textContent = '正在获取隧道地址...';
-      urlBox.classList.remove('show');
-      btnGroup.style.display = 'none';
+      statusBar.className = 'status-bar';
+      statusBar.innerHTML = '<div class="spinner"></div><span id="statusText">正在获取隧道地址...</span>';
+      statusText = document.getElementById('statusText');
+      urlInfo.style.display = 'none';
+      cardMain.classList.add('disabled');
+      cardDownload.classList.add('disabled');
       retryBtn.classList.remove('show');
 
       fetchTunnelUrl(function(url, err) {
         if (err) {
-          spinner.style.display = 'none';
-          statusText.className = 'status-text error';
-          statusText.textContent = '获取隧道地址失败';
+          statusBar.className = 'status-bar error';
+          statusBar.innerHTML = '<span>获取隧道地址失败</span>';
           retryBtn.classList.add('show');
           return;
         }
 
         // 成功获取 URL
-        spinner.style.display = 'none';
-        statusText.className = 'status-text success';
-        statusText.textContent = '地址获取成功，请选择要访问的站点';
+        statusBar.className = 'status-bar success';
+        statusBar.innerHTML = '<span>地址获取成功，请选择要访问的站点</span>';
 
         // 显示隧道地址
         urlValue.textContent = url;
-        urlBox.classList.add('show');
+        urlInfo.style.display = 'block';
 
-        // 设置按钮链接（直接跳转当前页）
+        // 设置链接
         var mainUrl = url.replace(/\/+$/, '');
         var dlUrl = mainUrl + '/download/';
-        btnMain.href = mainUrl;
-        btnDownload.href = dlUrl;
+        cardMain.href = mainUrl;
+        cardDownload.href = dlUrl;
+        navMain.href = mainUrl;
+        navDownload.href = dlUrl;
 
-        // 显示按钮
-        btnGroup.style.display = 'flex';
+        // 启用卡片
+        cardMain.classList.remove('disabled');
+        cardDownload.classList.remove('disabled');
       });
     }
 
@@ -299,7 +420,7 @@
     // 版本检查（强制刷新缓存）
     // ============================================================
     (function() {
-      var CURRENT_VERSION = '7';
+      var CURRENT_VERSION = '8';
       try {
         var stored = localStorage.getItem('redirect_page_version');
         if (stored !== CURRENT_VERSION) {
