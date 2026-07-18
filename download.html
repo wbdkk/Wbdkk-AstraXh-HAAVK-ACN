@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ACN下载中心</title>
+  <link rel="icon" type="image/png" href="logo.png" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <style>
+    :root {
+      --bg: #1a1a22;
+      --text-title: #ffffff;
+      --text-dim: #71717a;
+      --accent: #7dd3fc;
+      --accent-dim: rgba(125,211,252,0.12);
+      --danger: #fca5a5;
+      --radius: 12px;
+      --transition: 0.2s ease;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Microsoft YaHei", "PingFang SC", -apple-system, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text-dim);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--bg);
+      margin-bottom: 24px;
+    }
+    .title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-title);
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .status {
+      font-size: 14px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid var(--accent-dim);
+      border-top: 2px solid var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error { color: var(--danger); }
+    .retry-btn {
+      display: none;
+      margin-top: 20px;
+      padding: 10px 28px;
+      background: transparent;
+      border: 1px solid var(--danger);
+      color: var(--danger);
+      border-radius: var(--radius);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+    .retry-btn:hover { background: rgba(252,165,165,0.08); }
+    .retry-btn.show { display: inline-block; }
+    .footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-dim);
+      padding: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">A</div>
+  <div class="title">ACN下载中心</div>
+  <div class="status" id="status">
+    <div class="spinner"></div>
+    <span id="statusText">正在连接服务器...</span>
+  </div>
+  <button class="retry-btn" id="retryBtn" onclick="init()">重新连接</button>
+  <div class="footer">&copy; 2026 ACN下载中心 All rights reserved.<br>本网站所有权归 忘本的可可 所有</div>
+
+  <script>
+    var REPO = 'xnnkk/Wbdkk-AstraXh-HAAVK-ACN';
+    var URL_SOURCES = [
+      'url.txt?t=' + Date.now(),
+      'https://cdn.jsdelivr.net/gh/' + REPO + '@main/url.txt?t=' + Date.now(),
+      'https://raw.githubusercontent.com/' + REPO + '/main/url.txt?t=' + Date.now()
+    ];
+    var TARGET_PATH = '/download/';
+
+    function httpGet(url, onSuccess, onError) {
+      var xhr = new XMLHttpRequest();
+      xhr.timeout = 8000;
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            onSuccess(xhr.responseText.trim());
+          } else {
+            onError('HTTP ' + xhr.status);
+          }
+        }
+      };
+      xhr.ontimeout = function() { onError('timeout'); };
+      xhr.onerror = function() { onError('network error'); };
+      try { xhr.open('GET', url, true); xhr.send(); }
+      catch (e) { onError(e.message); }
+    }
+
+    function fetchTunnelUrl(callback) {
+      var index = 0;
+      function tryNext() {
+        if (index >= URL_SOURCES.length) {
+          callback(null, 'failed');
+          return;
+        }
+        var src = URL_SOURCES[index];
+        index++;
+        httpGet(src, function(text) {
+          if (text && text.indexOf('http') === 0) {
+            callback(text, null);
+          } else {
+            tryNext();
+          }
+        }, function() { tryNext(); });
+      }
+      tryNext();
+    }
+
+    function init() {
+      var status = document.getElementById('status');
+      var statusText = document.getElementById('statusText');
+      var retryBtn = document.getElementById('retryBtn');
+      status.className = 'status';
+      status.innerHTML = '<div class="spinner"></div><span id="statusText">正在连接服务器...</span>';
+      retryBtn.classList.remove('show');
+
+      fetchTunnelUrl(function(url, err) {
+        if (err) {
+          status.className = 'status error';
+          status.innerHTML = '<span>连接失败，请稍后重试</span>';
+          retryBtn.classList.add('show');
+          return;
+        }
+        var target = url.replace(/\/+$/, '') + TARGET_PATH;
+        status.innerHTML = '<span>正在跳转...</span>';
+        window.location.href = target;
+      });
+    }
+
+    (function() {
+      var CURRENT_VERSION = '10';
+      try {
+        var stored = localStorage.getItem('redirect_download_version');
+        if (stored !== CURRENT_VERSION) {
+          localStorage.setItem('redirect_download_version', CURRENT_VERSION);
+        }
+      } catch (e) {}
+      init();
+    })();
+  </script>
+</body>
+</html>
